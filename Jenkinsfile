@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    // using docker agent for access to docker cli
+    agent {
+        docker {
+            image 'docker:20.10.16'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
