@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        // Replace 'docker-hub' with your Jenkins credentials ID if different
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub')
     }
     
