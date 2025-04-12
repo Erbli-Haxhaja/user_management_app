@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
         <div className="flex items-center">
           <img src="/icon.jpg" className="h-8 w-8 mr-3 rounded" alt="User Management Logo"/>
-          <span className="self-center text-xl font-semibold whitespace-nowrap">
+          <span className="self-center text-xl font-semibold whitespace-nowrap text-gray-700">
             User Management
           </span>
         </div>
