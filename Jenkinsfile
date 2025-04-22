@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image using the Dockerfile in the current directory
-                    sh 'docker build -t eeba19/user_management_app:latest .'
+                    sh 'docker buildt -t eeba19/user_management_app:latest .'
                 }
             }
         }
