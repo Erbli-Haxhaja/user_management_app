@@ -1,14 +1,54 @@
 "use client"
 import { useState, useEffect } from "react";
 
+// client-side function to send a log
+async function sendLog(level, message) {
+  try {
+    const res = await fetch('/api/logger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ level, message })
+    });
+    if (!res.ok) {
+      console.error('Failed to send log:', await res.text());
+    }
+  } catch (error) {
+    console.error('Error sending log:', error);
+  }
+}
+
 const UsersTable = () => {
   const [users, setUsers] = useState([]);
+
+  // Global error logging
+  useEffect(() => {
+    // Handler for general JavaScript errors
+    const handleGlobalError = (message, source, lineno, colno, error) => {
+      sendLog('error', `Global error: ${message} at ${source}:${lineno}:${colno} - ${error?.stack || ''}`);
+    };
+
+    // Handler for unhandled promise rejections
+    const handleUnhandledRejection = (event) => {
+      sendLog('error', `Unhandled promise rejection: ${event.reason}`);
+    };
+
+    // Register the handlers
+    window.onerror = handleGlobalError;
+    window.onunhandledrejection = handleUnhandledRejection;
+
+    // Cleanup on unmount
+    return () => {
+      window.onerror = null;
+      window.onunhandledrejection = null;
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await fetch('/api/getUsers');
         if (!res.ok) {
+          sendLog("error", `Failed to fetch users`);
           throw new Error('Failed to fetch users');
         }
         const data = await res.json();
@@ -24,8 +64,11 @@ const UsersTable = () => {
           createdAt: user.created_at // Convert to camelCase
         }));
         setUsers(processedUsers);
+        sendLog("info", `Users fetched successfully.`);
+
       } catch (error) {
         console.error('Error fetching users:', error);
+        sendLog("error", `Error fetching users: ${error}`);
       }
     };
     

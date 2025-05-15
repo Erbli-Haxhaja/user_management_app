@@ -2,6 +2,22 @@
 import { useState } from 'react';
 import Navbar from "../components/Navbar/Navbar.js";
 
+// client-side function to send a log
+async function sendLog(level, message) {
+  try {
+    const res = await fetch('/api/logger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ level, message })
+    });
+    if (!res.ok) {
+      console.error('Failed to send log:', await res.text());
+    }
+  } catch (error) {
+    console.error('Error sending log:', error);
+  }
+}
+
 export default function Home() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
@@ -35,6 +51,7 @@ export default function Home() {
 
       if (res.ok) {
         console.log('User added successfully');
+        sendLog("info", "User added successfully");
         setShowSuccess(true);
         // Clear form after successful submission
         setName("");
@@ -45,10 +62,12 @@ export default function Home() {
         setIsActive(true);
       } else {
         console.error('Failed to add user');
+        sendLog("error", "Failed to add user!");
         setShowError(true);
       }
     } catch (error) {
       console.error('Error adding user:', error);
+      sendLog("error", `Failed to add user: ${error}`);
       setShowError(true);
     }
   };
